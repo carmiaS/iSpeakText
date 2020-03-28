@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title></title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.95.1/css/materialize.min.css">
+    <style>
+        .nav-wrapper {
+            /*background for block around text to speech text*/
+            background-color: lightseagreen;
+        }
+        
+        #speak {
+            /*text color*/
+            color: ;
+            /*back of button*/
+            background-color: ;
+        }
+        
+        #voices {
+            border-bottom-color: black !important;
+        }
+        
+        .container {
+            /*inside the main box area of everything*/
+            background-color: white;
+        }
+        
+        body {
+            /*the rest of the webpage*/
+            background-color: lightseagreen;
+        }
+        
+        label {
+            color: black;
+            font-size: 14pt;
+        }
+        
+        #label {
+            color: black;
+            font-size: 14pt;
+        }
+        
+        .materialize-textarea {
+            /*color is black when not in text area*/
+            border-bottom-color: black !important;
+        }
+        
+        .materialize-textarea:focus {
+            /*when typing in text area color changes to same as buttons*/
+            border-bottom-color: lightseagreen !important;
+        }
+        
+        select: {
+            color: black !important;
+            ;
+        }
+        
+        .col s12 {
+            font-size: 11pt;
+        }
+        
+        .hiddendiv {
+            white-space: pre-wrap;
+            word-wrap: break-word;
+            overflow-wrap: break-word;
+            padding-top: 1.2rem;
+        }
+        
+        #none {
+            float: right;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div class="row">
+            <nav>
+                <div class="nav-wrapper">
+                    <div class="col s12"> <a href="#" class="brand-logo">iSpeak Text</a> </div>
+                </div>
+            </nav>
+        </div>
+        <form class="col s8 offset-s2">
+            <div class="row">
+                <label>Choose voice</label>
+                <select id="voices"></select>
+            </div>
+            <div class="row">
+                <div class="col s6">
+                    <label>Rate</label>
+                    <p class="range-field">
+                        <input type="range" id="rate" min="1" max="100" value="10" /> </p>
+                </div>
+                <div class="col s6">
+                    <label>Pitch</label>
+                    <p class="range-field">
+                        <input type="range" id="pitch" min="0" max="3" value="1" /> </p>
+                </div>
+                <div class="col s12">
+                    <p>Rate and Pitch only work with English voices.</p>
+                </div>
+            </div>
+            <div class="row">
+                <div class="input-field col s12">
+                    <textarea id="message" class="materialize-textarea"></textarea>
+                    <label id="label">Write message</label>
+                </div>
+            </div> <a href="#" id="speak" class="waves-effect waves-light btn">Start</a> <a href="#" id="pause" class="waves-effect waves-light btn">Pause</a> <a href="#" id="resume" class="waves-effect waves-light btn">Resume</a> <a href="#" id="stop" class="waves-effect waves-light btn">Stop</a><a href="#" id="none" class="waves-effect waves-light btn">No Voice to Choose?</a>
+            <p>Want to try the app?...</p>
+        </form>
+        <div id="modal2" class="modal">
+            <h4>Limited Number of Voices</h4>
+            <p>Your browser only offers one voice option to use.</p>
+            <p>You are still able to use text-to-speech but not able to change the voice.</p>
+        </div>
+    </div>
+    <div id="modal1" class="modal">
+        <h4>Speech Synthesis not supported</h4>
+        <p>Your browser does not support speech synthesis.</p>
+        <p>We recommend you use Google Chrome.</p>
+        <div class="action-bar"> <a href="#" class="waves-effect waves-green btn-flat modal-action modal-close">Close</a> </div>
+    </div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.95.1/js/materialize.min.js"></script>
+    <script>
+        $(function () {
+            if ('speechSynthesis' in window) {
+                speechSynthesis.onvoiceschanged = function () {
+                    var $voicelist = $('#voices');
+                    if ($voicelist.find('option').length == 0) {
+                        speechSynthesis.getVoices().forEach(function (voice, index) {
+                            var $option = $('<option>').val(index).html(voice.name + (voice.default ? ' (default)' : ''));
+                            $voicelist.append($option);
+                        });
+                        $voicelist.material_select();
+                    }
+                }
+                $('#speak').click(function () {
+                    var text = $('#message').val();
+                    var msg = new SpeechSynthesisUtterance();
+                    var voices = window.speechSynthesis.getVoices();
+                    msg.voice = voices[$('#voices').val()];
+                    msg.rate = $('#rate').val() / 10;
+                    msg.pitch = $('#pitch').val();
+                    msg.text = text;
+                    msg.onend = function (e) {
+                        console.log('Finished in ' + event.elapsedTime + ' seconds.');
+                    };
+                    speechSynthesis.speak(msg);
+                })
+                $('#pause').click(function () {
+                    var text = $('#message').val();
+                    var msg = new SpeechSynthesisUtterance();
+                    var voices = window.speechSynthesis.getVoices();
+                    msg.voice = voices[$('#voices').val()];
+                    msg.rate = $('#rate').val() / 10;
+                    msg.pitch = $('#pitch').val();
+                    msg.text = text;
+                    msg.onend = function (e) {
+                        console.log('Finished in ' + event.elapsedTime + ' seconds.');
+                    };
+                    speechSynthesis.pause(msg);
+                })
+                $('#resume').click(function () {
+                    var text = $('#message').val();
+                    var msg = new SpeechSynthesisUtterance();
+                    var voices = window.speechSynthesis.getVoices();
+                    msg.voice = voices[$('#voices').val()];
+                    msg.rate = $('#rate').val() / 10;
+                    msg.pitch = $('#pitch').val();
+                    msg.text = text;
+                    msg.onend = function (e) {
+                        console.log('Finished in ' + event.elapsedTime + ' seconds.');
+                    };
+                    speechSynthesis.resume(msg);
+                })
+                $('#stop').click(function () {
+                    var text = $('#message').val();
+                    var msg = new SpeechSynthesisUtterance();
+                    var voices = window.speechSynthesis.getVoices();
+                    msg.voice = voices[$('#voices').val()];
+                    msg.rate = $('#rate').val() / 10;
+                    msg.pitch = $('#pitch').val();
+                    msg.text = text;
+                    msg.onend = function (e) {
+                        console.log('Finished in ' + event.elapsedTime + ' seconds.');
+                    };
+                    speechSynthesis.cancel(msg);
+                })
+            }
+            else {
+                //opens popup saying browser not supported
+                $('#modal1').openModal();
+            }
+        });
+        //opens voice option popup saying browser only has one voice to use
+        $(document).ready(function () {
+            $('#none').click(function () {
+                $('#modal2').openModal();
+            });
+        });
+    </script>
+</body>
+
+</html>
